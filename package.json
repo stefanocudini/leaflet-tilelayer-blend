@@ -1,0 +1,32 @@
+{
+  "name": "leaflet-tilelayer-blend",
+  "version": "1.0.0",
+  "description": "Apply CSS Blend Modes filters to a stack of tile layers",
+  "main": "src/leaflet-tilelayer-blend.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stefanocudini/leaflet-tilelayer-blend.git"
+  },
+  "keywords": [
+    "leaflet",
+    "tilelayer",
+    "css3",
+    "maps",
+    "javascript"
+  ],
+  "author": "Stefano Cudini",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stefanocudini/leaflet-tilelayer-blend/issues"
+  },
+  "homepage": "https://github.com/stefanocudini/leaflet-tilelayer-blend#readme",
+  "dependencies": {
+    "leaflet": "^1.3.0"
+  }
+}
