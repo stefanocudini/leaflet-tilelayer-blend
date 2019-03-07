@@ -16,8 +16,8 @@ if (typeof define === 'function' && define.amd) {
 L.TileLayer.Blend = L.TileLayer.extend({
 	
 	options: {
-		mode: 'overlay',
-		classNameTile: 'blend'
+		blendMode: 'overlay',
+		tileClassName: 'blend'
 	},
 
 	blendModes: [
@@ -29,10 +29,53 @@ L.TileLayer.Blend = L.TileLayer.extend({
 		'hue','saturation','color','luminosity'
 	],
 
-	intialize: function (layers, options) {
 
-		//TODO
+	initialize: function (layers, options) {
+		L.setOptions(this, options);
+
+		this._layers = {};
+
+		var i, len;
+
+		if (layers) {
+			for (i = 0, len = layers.length; i < len; i++) {
+				this.addLayer(layers[i], layers[i].);
+			}
+		}
 	},
+
+	addLayer: function (layer, blendMode) {
+		var id = L.stamp(layer);
+
+		this._layers[id] = layer;
+console.log(layer)
+		/*if (this._map) {
+			this._map.addLayer(layer);
+		}*/
+
+		return this;
+	},
+
+    createTile: function (coords) {
+        var tile = document.createElement('div',this.options.tileClassName);
+        //tile.innerHTML = [coords.x, coords.y, coords.z].join(', ');        
+        tile.style.outline = '1px solid red';
+        tile.style.backgroundRepeat = 'no-repeat';
+        //tile.style.backgroundPosition = 'center center';
+/*
+        var urls = [];
+        for (var i in this._layers) {
+            urls.push("url('"+this._layers[i].getTileUrl(coords)+"')");
+        }
+
+        if(!tile.style.backgroundImage) {
+            tile.style.backgroundImage = urls.join(',');
+            tile.style.backgroundBlendMode = this.options.blendMode;//'overlay';
+        }*/
+
+        return tile;
+    },
+/*
 	_initContainer: function () {
 		let tile = L.TileLayer.prototype._initContainer.call(this);
 		this._container.style.filter = this.colorFilter();
@@ -42,7 +85,7 @@ L.TileLayer.Blend = L.TileLayer.extend({
 		if (this._container) {
 			this._container.style.filter = this.colorFilter();
 		}
-	},
+	},*/
 });
 
 L.tileLayer.blend = function (layers, options) {

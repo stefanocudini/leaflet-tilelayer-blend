@@ -7,63 +7,25 @@
 <style>
 #map {
 	position: absolute;
-	top:34px;
+	top:0;
 	left: 0;
 	bottom: 0;
 	right: 0;
-    max-width: 800px
+    max-width: 800px;
+    background-color: #3ff;
 }
-/*.leaflet-layer.blend {
-	transition: all 1s ease;
-}
-.leaflet-layer.blend.overlay .leaflet-tile {
-    background-blend-mode: overlay;
-    transition: all 1s ease;
-}
-.leaflet-layer.blend.multiply .leaflet-tile {
-    background-blend-mode: multiply;
-    transition: all 1s ease;
-}
-.leaflet-layer.blend.screen .leaflet-tile {
-    background-blend-mode: screen;
-    transition: all 1s ease;
-}*/
-.leaflet-layer.blend.darken .leaflet-tile {
-    background-blend-mode: darken !important;
-}
-.leaflet-layer.blend.lighten .leaflet-tile {
-    background-blend-mode: lighten !important;
-}
-.leaflet-layer.blend.color-dodge .leaflet-tile {
-    background-blend-mode: color-dodge !important;
-}
-.leaflet-layer.blend.color-burn .leaflet-tile {
-    background-blend-mode: color-burn !important;
-}
-.leaflet-layer.blend.hard-light .leaflet-tile {
-    background-blend-mode: hard-light !important;
-}
-.leaflet-layer.blend.soft-light .leaflet-tile {
-    background-blend-mode: soft-light !important;
-}
-.leaflet-layer.blend.difference .leaflet-tile {
-    background-blend-mode: difference !important;
-}
-.leaflet-layer.blend.exclusion .leaflet-tile {
-    background-blend-mode: exclusion !important;
-}
-.leaflet-layer.blend.hue .leaflet-tile {
-    background-blend-mode: hue !important;
-}
-.leaflet-layer.blend.saturation .leaflet-tile {
-    background-blend-mode: saturation !important;
-}
-.leaflet-layer.blend.color .leaflet-tile {
-    background-blend-mode: color !important;
-}
-.leaflet-layer.blend.luminosity .leaflet-tile {
-    background-blend-mode: luminosity !important;
-}
+.leaflet-layer.blend.darken .leaflet-tile { background-blend-mode: darken !important; }
+.leaflet-layer.blend.lighten .leaflet-tile { background-blend-mode: lighten !important; }
+.leaflet-layer.blend.color-dodge .leaflet-tile { background-blend-mode: color-dodge !important; }
+.leaflet-layer.blend.color-burn .leaflet-tile { background-blend-mode: color-burn !important; }
+.leaflet-layer.blend.hard-light .leaflet-tile { background-blend-mode: hard-light !important; }
+.leaflet-layer.blend.soft-light .leaflet-tile { background-blend-mode: soft-light !important; }
+.leaflet-layer.blend.difference .leaflet-tile { background-blend-mode: difference !important; }
+.leaflet-layer.blend.exclusion .leaflet-tile { background-blend-mode: exclusion !important; }
+.leaflet-layer.blend.hue .leaflet-tile { background-blend-mode: hue !important; }
+.leaflet-layer.blend.saturation .leaflet-tile { background-blend-mode: saturation !important; }
+.leaflet-layer.blend.color .leaflet-tile { background-blend-mode: color !important; }
+.leaflet-layer.blend.luminosity .leaflet-tile { background-blend-mode: luminosity !important; }
 #mode_wrap {
     padding: 4px;
     border-radius: 2px;
@@ -101,23 +63,8 @@
 <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
 <script src="https://unpkg.com/underscore@1.9.1/underscore.js"></script>
 <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
-
+<script src="../src/leaflet-tilelayer-blend.js"></script>
 <script>
-
-var minZoomHeat = 14;
-
-var urlBase = 'http://geo.easyblog.it/geoserver',
-	urlWms = urlBase+'/kepler/ows';
-
-var baselayer = L.tileLayer(
-	//'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-	'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-	subdomains: 'abcd',
-	maxZoom: 19,
-	//tms: true,
-	//crs: L.CRS.EPSG3857,
-	opacity: 0.7
-});
 
 var map = L.map('map', {
 		//crs: L.CRS.EPSG4326,
@@ -125,72 +72,39 @@ var map = L.map('map', {
 		maxBounds: [[-90, -180], [90, 180]],
 		minZoom: 3,
 		noWrap:true,
-		center: [46.063583647141385, 11.147003173828125],
-		layers: baselayer
+		center: [46.063583647141385, 11.147003173828125]
 	});
 
-var hill = L.tileLayer.wms(urlBase+'/ows', {
-    layers: 'alps_hillshade_30m',
-    format: 'image/png',
-    className: 'hill',
-    zIndex: 10,
-    transparent: true
-}).addTo(map);
+var base = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        zIndex: 10,
+        attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
 
-var dem = L.tileLayer.wms(urlBase+'/ows', {
-    layers: 'alps_dem_30m',
-    format: 'image/png',
-    className: 'dem',
-    zIndex: 20,
-	//opacity:0.8,
-    transparent: true
-}).addTo(map);
+var hill = L.tileLayer('https://tiles.wmflabs.org/hillshading/{z}/{x}/{y}.png', {
+        maxZoom: 15,
+        zIndex: 1,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+
+var blend = new L.TileLayer.Blend([base, hill], {
+    //className: 'blend',
+    blendMode: $('#mode').val()
+});//.addTo(map);
+
 
 var baseLayers = {
-		//'OpenStreetMap': baselayer
+	//	'OpenStreetMap': L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
 	},
 	overlays = {
-        'Hillshade': hill,
-        'Altitude': dem
+        'Hydda Base': base,
+        'HikeBike HillShading': hill,
+        'Tilelayer Blend': blend
 	};
-
-L.TileLayer.Blend = L.TileLayer.WMS.extend({
-/*    getTileUrl: function(coords) {
-        var i = Math.ceil( Math.random() * 4 );
-        return "https://placekitten.com/256/256?image=" + i;
-    },*/
-    createTile: function (coords) {
-        var tile = document.createElement('div','blend');
-        //tile.innerHTML = [coords.x, coords.y, coords.z].join(', ');        
-        //tile.style.outline = '1px solid red';
-        tile.style.backgroundRepeat = 'no-repeat';
-        //tile.style.backgroundPosition = 'center center';
-
-        var u = [];
-       	//u.push("url('"+this.getTileUrl(coords)+"')");
-       	u.push("url('"+dem.getTileUrl(coords)+"')");
-        u.push("url('"+hill.getTileUrl(coords)+"')");
-       	u.reverse();
-        tile.style.backgroundImage = u.join(',');
-
-        tile.style.backgroundBlendMode = $('#mode').val();//'overlay';
-        return tile;
-    }
-});
 
 $('#mode').on('change', function(e) {
 	var c = $(this).val();
-	console.log(c)
 	$('.leaflet-layer.blend').removeClass().addClass('leaflet-layer blend '+c)
-});
-
-overlays['Blend'] = new L.TileLayer.Blend(urlBase+'/ows', {
-    layers: 'alps_dem_30m',
-    format: 'image/png',
-    className: 'blend',
-    zIndex: 20,
-	//opacity:0.8,
-    transparent: true
 });
 
 L.control.layers(baseLayers, overlays, {
